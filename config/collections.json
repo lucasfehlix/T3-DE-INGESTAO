@@ -1,0 +1,58 @@
+{
+  "collections": [
+    {
+      "name": "movies",
+      "load_type": "incremental",
+      "watermark_field": "lastupdated",
+      "watermark_type": "string",
+      "watermark_default": "1970-01-01 00:00:00.000000000",
+      "projection_exclude": ["fullplot", "poster"],
+      "notes": "lastupdated é string 'YYYY-MM-DD HH:MM:SS.nnnnnnnnn' - comparação lexicográfica é válida nesse formato específico. fullplot/poster excluídos por serem campos largos sem valor para a Bronze (documentar decisão no README)."
+    },
+    {
+      "name": "comments",
+      "load_type": "incremental",
+      "watermark_field": "date",
+      "watermark_type": "date",
+      "watermark_default": "1970-01-01T00:00:00Z",
+      "projection_exclude": [],
+      "notes": "date é ISODate nativo - watermark direta e confiável. Maior volume (~50k) - carga incremental é a que mais economiza recurso."
+    },
+    {
+      "name": "users",
+      "load_type": "full",
+      "watermark_field": null,
+      "watermark_type": null,
+      "watermark_default": null,
+      "projection_exclude": ["password"],
+      "notes": "coleção pequena e estável (~185 docs). password é hash bcrypt sem valor analítico e sensível - excluído via projection pushdown (nunca chega a trafegar da origem)."
+    },
+    {
+      "name": "theaters",
+      "load_type": "full",
+      "watermark_field": null,
+      "watermark_type": null,
+      "watermark_default": null,
+      "projection_exclude": [],
+      "notes": "coleção pequena e estável (~1.500 docs). GeoJSON aninhado (location.geo.coordinates) preservado como veio - fidelidade à origem."
+    },
+    {
+      "name": "sessions",
+      "load_type": "full",
+      "watermark_field": null,
+      "watermark_type": null,
+      "watermark_default": null,
+      "projection_exclude": ["jwt"],
+      "notes": "coleção pode estar vazia (poucos docs) - pipeline não pode falhar com count=0. jwt é token ativo - excluído por segurança."
+    },
+    {
+      "name": "embedded_movies",
+      "load_type": "full",
+      "watermark_field": null,
+      "watermark_type": null,
+      "watermark_default": null,
+      "projection_exclude": ["plot_embedding"],
+      "notes": "plot_embedding é vetor de ~1536 floats (~12KB/doc, ~42MB na coleção inteira) - excluído via projection pushdown para não sobrecarregar memória do driver/executors (R2)."
+    }
+  ]
+}

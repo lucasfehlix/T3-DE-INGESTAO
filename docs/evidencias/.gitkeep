@@ -1,0 +1,6 @@
+Coloque aqui os prints das 3 execuções obrigatórias, gerados a partir de
+notebooks/01_run_pipeline.py + notebooks/02_reconciliation_and_evidence.py:
+
+- execucao_01_full_load.png
+- execucao_02_incremental_sem_novidades.png
+- execucao_03_incremental_com_dados.png

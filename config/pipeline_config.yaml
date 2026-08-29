@@ -1,0 +1,36 @@
+# Configuração da pipeline de ingestão sample_mflix -> Bronze
+#
+# Nenhuma credencial deve ser adicionada neste arquivo. A URI de conexão do
+# MongoDB é lida em tempo de execução a partir de um Databricks Secret Scope
+# (ver README.md e o notebook `create-secret.ipynb`, na raiz do projeto).
+
+catalog: meu_catalog
+
+schemas:
+  landing: landing
+  bronze: bronze
+
+mongodb:
+  database: sample_mflix
+  secret_scope: conn-db
+  secret_key: cnn-mongodb-sampleflix
+  server_selection_timeout_ms: 15000
+  socket_timeout_ms: 300000
+  app_name: databricks-mongodb-ingestion
+
+extraction:
+  batch_size: 5000          # tamanho do lote lido do cursor MongoDB (R2 - leitura paginada)
+  max_retries: 3             # tentativas em falha transitória de rede (R2 - retry/backoff)
+  backoff_base_seconds: 2    # backoff exponencial: 2s, 4s, 8s...
+
+write:
+  target_rows_per_partition: 50000   # usado para calcular repartition() e evitar small files/skew (R2)
+
+reconciliation:
+  max_divergence_pct: 1.0    # acima disso, a execução é marcada como PARTIAL (R8)
+
+table_naming:
+  prefix: sample_mflix__
+  control_log_table: control_ingestion_log
+  watermark_table: control_watermark
+  quarantine_table: control_ingestion_quarantine

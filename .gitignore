@@ -1,0 +1,33 @@
+# Segredos e credenciais — nunca versionar valores reais
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+secrets.json
+secrets.yaml
+secrets.yml
+
+# Materiais de referência do professor — não fazem parte da entrega
+# (code-samples/ contém notebooks de exemplo com credenciais reais em
+# texto puro: Mongo em create-secret.py, Postgres em create_catalog.ipynb)
+/pdfs/
+/code-samples/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# Jupyter / Databricks
+.ipynb_checkpoints/
+.databricks/
+
+# SO / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

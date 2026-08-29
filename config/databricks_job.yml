@@ -1,0 +1,52 @@
+# Definição declarativa do Job de ingestão (bônus - Orquestração, Aula 5).
+#
+# Formato de referência estilo Databricks Asset Bundle / Workflows API.
+# Pode ser aplicado via Databricks CLI (`databricks bundle deploy`) ou usado
+# como roteiro para criar o Job manualmente na UI de Workflows, substituindo
+# os placeholders entre <> pelo seu workspace/usuário.
+#
+# Duas tasks encadeadas (ingestion_job -> bronze_job), retry com backoff,
+# timeout, notificação de falha e agendamento cron com timezone declarado -
+# seguindo o checklist de resiliência da Aula 5 (5.4/5.5).
+
+resources:
+  jobs:
+    sample_mflix_bronze_ingestion:
+      name: sample_mflix_bronze_ingestion
+      timeout_seconds: 3600
+      max_concurrent_runs: 1
+      schedule:
+        quartz_cron_expression: "0 0 3 * * ?"   # todo dia às 03:00
+        timezone_id: America/Sao_Paulo
+        pause_status: PAUSED   # ativar manualmente após validar as 3 execuções de evidência
+
+      tasks:
+        - task_key: ingestion_job
+          notebook_task:
+            notebook_path: /Repos/<seu_usuario>/T3-DE-INGESTAO/jobs/ingestion_job
+            base_parameters:
+              pipeline_config_path: /Workspace/Repos/<seu_usuario>/T3-DE-INGESTAO/config/pipeline_config.yaml
+              collections_config_path: /Workspace/Repos/<seu_usuario>/T3-DE-INGESTAO/config/collections.json
+          max_retries: 3
+          min_retry_interval_millis: 60000   # backoff: 1min -> 2min -> 4min
+          retry_on_timeout: true
+          timeout_seconds: 1800
+          email_notifications:
+            on_failure: ["<seu_email>@edu.unifor.br"]
+            on_duration_warning_threshold_exceeded: ["<seu_email>@edu.unifor.br"]
+
+        - task_key: bronze_job
+          depends_on:
+            - task_key: ingestion_job
+          run_if: ALL_SUCCESS
+          notebook_task:
+            notebook_path: /Repos/<seu_usuario>/T3-DE-INGESTAO/jobs/bronze_job
+            base_parameters:
+              pipeline_config_path: /Workspace/Repos/<seu_usuario>/T3-DE-INGESTAO/config/pipeline_config.yaml
+              collections_config_path: /Workspace/Repos/<seu_usuario>/T3-DE-INGESTAO/config/collections.json
+          max_retries: 2
+          min_retry_interval_millis: 60000
+          timeout_seconds: 1800
+          email_notifications:
+            on_failure: ["<seu_email>@edu.unifor.br"]
+            on_duration_warning_threshold_exceeded: ["<seu_email>@edu.unifor.br"]

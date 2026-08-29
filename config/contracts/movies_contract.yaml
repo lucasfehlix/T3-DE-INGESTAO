@@ -1,0 +1,46 @@
+# Data contract (bônus) - dataset sample_mflix.movies
+#
+# Formaliza o acordo entre a origem (MongoDB) e a Bronze: campos, tipos,
+# obrigatoriedade e ranges aceitáveis. Este único arquivo alimenta tanto os
+# checks de qualidade aplicados em Spark quanto o validator $jsonSchema que
+# pode ser imposto na origem - a regra existe em um único lugar
+# (ver Aula 4, seção 4.4, e notebooks/03_data_contract_bonus.ipynb).
+
+dataset: sample_mflix.movies
+versao: 1.0.0
+produtor: mongodb-sample-mflix
+consumidor: bronze-ingestion-pipeline
+
+origem:
+  tipo: mongodb
+  colecao: movies
+
+sla:
+  frescor_horas: 8760
+  volume_minimo: 20000
+
+campos:
+  - nome: _id
+    tipo: string
+    obrigatorio: true
+  - nome: title
+    tipo: string
+    obrigatorio: true
+  - nome: year
+    tipo: integer
+    obrigatorio: true
+    min: 1880
+    max: 2030
+  - nome: runtime
+    tipo: integer
+    obrigatorio: false
+    min: 1
+  - nome: genres
+    tipo: array
+    obrigatorio: true
+    min_itens: 1
+  - nome: imdb.rating
+    tipo: double
+    obrigatorio: false
+    min: 0
+    max: 10
