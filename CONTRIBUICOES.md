@@ -8,14 +8,13 @@
 
 ## Detalhamento por commit
 
-> Nota: os commits abaixo foram feitos sob a identidade Git configurada nesta máquina
-> (`lucasafportela <lucasafportela@gmail.com>`), pertencente ao mesmo autor,
-> Lucas Araujo Felix Portela, matrícula 2651722.
+> `git log --oneline --author="lucasfehlix@gmail.com"`
 
 ```
-23f87a9 Adiciona evidencia da Execucao 3 (incremental com dados novos)
-4307d64 Adiciona evidencia da Execucao 2 (incremental sem novidades)
-7842686 Adiciona evidencia da Execucao 1 (carga full inicial)
-2150409 Remove %run problematico do create-secret em 01_run_pipeline
-bb922c0 Implementa pipeline de ingestao sample_mflix -> Bronze (Databricks)
+ee6e2fc Preenche CONTRIBUICOES.md com nome, matricula e historico de commits
+94df763 Adiciona evidencia da Execucao 3 (incremental com dados novos)
+a4f3998 Adiciona evidencia da Execucao 2 (incremental sem novidades)
+074fe45 Adiciona evidencia da Execucao 1 (carga full inicial)
+174031f Remove %run problematico do create-secret em 01_run_pipeline
+8f28ae2 Implementa pipeline de ingestao sample_mflix -> Bronze (Databricks)
 ```
